@@ -6,13 +6,18 @@
 bool is_running = false;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+
 int const window_width = 800;
 int const window_height = 600;
 int const number_of_pixels = window_width * window_height;
+uint32_t const pixels_colors_size = sizeof(int32_t) * number_of_pixels;
 
 uint32_t *pixels_colors = NULL;
+SDL_Texture *pixels_colors_texture = NULL;
 
 void destroy_window(void);
+
+void render_color_buffer();
 
 bool initialize_application_window(void) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -43,7 +48,14 @@ bool initialize_application_window(void) {
 }
 
 void setup(void) {
-    pixels_colors = (uint32_t *) malloc(sizeof(int32_t) * number_of_pixels);
+    pixels_colors = (uint32_t *) malloc(pixels_colors_size);
+    pixels_colors_texture = SDL_CreateTexture(
+            renderer,
+            SDL_PIXELFORMAT_ABGR8888,
+            SDL_TEXTUREACCESS_STREAMING,
+            window_width,
+            window_height
+            );
 }
 
 void process_input(void) {
@@ -65,13 +77,36 @@ void update(void) {
     // TODO:
 }
 
+void clear_pixels_colors(void) {
+    memset(
+            pixels_colors, 0, pixels_colors_size
+    );
+}
+
 void render(void) {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    //...
+    render_color_buffer();
+    clear_pixels_colors();
 
     SDL_RenderPresent(renderer);
+}
+
+void render_color_buffer() {
+    SDL_UpdateTexture(
+            pixels_colors_texture,
+            NULL,
+            pixels_colors,
+            (int) (window_width * sizeof(uint32_t))
+            );
+
+    SDL_RenderCopy(
+            renderer,
+            pixels_colors_texture,
+            NULL,
+            NULL
+            );
 }
 
 int main(void) {
