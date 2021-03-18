@@ -19,6 +19,8 @@ void destroy_window(void);
 
 void render_color_buffer();
 
+void draw_grid();
+
 bool initialize_application_window(void) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         fprintf(stderr, "Error initializing SDL.\n");
@@ -87,10 +89,18 @@ void render(void) {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderClear(renderer);
 
+    draw_grid();
     render_color_buffer();
     clear_pixels_colors();
 
     SDL_RenderPresent(renderer);
+}
+
+void draw_grid(void) {
+    for(int y=0; y < window_height; y+=10){
+        for(int x=0; x < window_width; x+=10)
+            pixels_colors[(window_width * y) + x ] = 0xFFFF0000;
+    }
 }
 
 void render_color_buffer() {
