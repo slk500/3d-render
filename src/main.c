@@ -18,8 +18,9 @@ SDL_Texture *pixels_colors_texture = NULL;
 void destroy_window(void);
 
 void render_color_buffer();
-
 void draw_grid();
+
+void draw_rectangle();
 
 bool initialize_application_window(void) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -90,6 +91,7 @@ void render(void) {
     SDL_RenderClear(renderer);
 
     draw_grid();
+    draw_rectangle(0,300,100,100,0xFFFF00);
     render_color_buffer();
     clear_pixels_colors();
 
@@ -99,7 +101,15 @@ void render(void) {
 void draw_grid(void) {
     for(int y=0; y < window_height; y+=10){
         for(int x=0; x < window_width; x+=10)
-            pixels_colors[(window_width * y) + x ] = 0xFFFF0000;
+            pixels_colors[(window_width * y) + x ] = 0xFF0000;
+    }
+}
+
+void draw_rectangle(int x, int y, int width, int height, uint32_t color) {
+    for(int temp_y = y; temp_y <= (y + height); temp_y++) {
+        for (int temp_x = x; temp_x <= (x + width); temp_x++) {
+            pixels_colors[(temp_y * window_width) + temp_x] = color;
+        }
     }
 }
 
