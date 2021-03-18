@@ -6,14 +6,15 @@
 bool is_running = false;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-int window_width = 800;
-int window_height = 600;
+int const window_width = 800;
+int const window_height = 600;
+int const number_of_pixels = window_width * window_height;
 
-uint32_t* color_buffer = NULL;
+uint32_t *pixels_colors = NULL;
 
-void destroy_window();
+void destroy_window(void);
 
-bool initialize_window(void) {
+bool initialize_application_window(void) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         fprintf(stderr, "Error initializing SDL.\n");
         return false;
@@ -42,7 +43,7 @@ bool initialize_window(void) {
 }
 
 void setup(void) {
-    color_buffer = (uint32_t*) malloc(sizeof (int32_t) * window_width * window_height);
+    pixels_colors = (uint32_t *) malloc(sizeof(int32_t) * number_of_pixels);
 }
 
 void process_input(void) {
@@ -74,7 +75,7 @@ void render(void) {
 }
 
 int main(void) {
-    is_running = initialize_window();
+    is_running = initialize_application_window();
 
     setup();
 
@@ -90,7 +91,7 @@ int main(void) {
 }
 
 void destroy_window() {
-    free(color_buffer);
+    free(pixels_colors);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
